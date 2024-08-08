@@ -1,0 +1,47 @@
+{
+  "name": "fitview",
+  "version": "0.0.1",
+  "description": "fitview",
+  "main": "./lib/fitview.es.js",
+  "browser": "./lib/fitview.umd.js",
+  "unpkg": "./lib/fitview.umd.js",
+  "type": "module",
+  "types": "index.d.ts",
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "cross-env NODE_ENV=dev rollup -c -w"
+  },
+  "bugs": {
+    "url": "https://github.com/pbstar/fitview/issues"
+  },
+  "files": [
+    "lib",
+    "index.d.ts",
+    "README.md"
+  ],
+  "contributors": [
+    {
+      "name": "彭勃",
+      "email": "pbstar@sina.cn"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pbstar/fitview.git"
+  },
+  "homepage": "https://github.com/pbstar/fitview",
+  "keywords": [
+    "fitview"
+  ],
+  "author": "pengbo <pbstar@sina.cn>",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "@types/node": "^20.14.10",
+    "cross-env": "^7.0.3",
+    "rollup": "^4.17.2",
+    "rollup-plugin-serve": "^1.1.1",
+    "tslib": "^2.6.3"
+  }
+}
