@@ -1,6 +1,6 @@
 {
   "name": "fitview",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "fitview",
   "main": "./lib/fitview.es.js",
   "browser": "./lib/fitview.umd.js",

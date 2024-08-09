@@ -15,20 +15,22 @@
     #container {
       width: 100vw;
       height: 100vh;
-      background-color: #ccc;
+      background-color: #eee;
     }
   </style>
 </head>
 
 <body>
   <div id="container">
-    <div style="width: 1920px;height: 1080px;background-color: rgb(255, 219, 219);"></div>
+    <div style="width: 1920px;height: 1080px;background-color: #bbb;">
+      <div style="width: 300px;height: 100px;background-color: red;"></div>
+    </div>
   </div>
   <script src="../lib/fitview.umd.js"></script>
   <script>
     new fitview({
       el: document.getElementById('container'),
-      fit:'contain'
+      fit:'contain',
     })
   </script>
 </body>

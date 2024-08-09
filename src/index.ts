@@ -6,6 +6,7 @@ class fitview {
   constructor(config: Config) {
     let data: Data = {
       el: null,
+      raw_el: null,
       fit: 'contain',
       uw: 1920,
       uh: 1080,
@@ -22,6 +23,7 @@ class fitview {
       return
     }
     data.el = config.el
+    data.raw_el = config.el.innerHTML
     if (config.fit) {
       let fitList = ['fill', 'contain', 'scroll', 'hidden']
       if (fitList.indexOf(config.fit) > -1) data.fit = config.fit
@@ -30,10 +32,18 @@ class fitview {
     if (config.uw) data.uw = config.uw
     if (config.uh) data.uh = config.uh
     if (config.resize || config.resize === false) data.resize = config.resize
-    let computedWidthHeight = getComputedWidthHeight(data.el)
-    data.vw = computedWidthHeight.width
-    data.vh = computedWidthHeight.height
-    init(data)
+    start()
+    if (data.resize) {
+      window.addEventListener('resize', () => {
+        start()
+      })
+    }
+    function start() {
+      let computedWidthHeight = getComputedWidthHeight(data.el as HTMLElement)
+      data.vw = computedWidthHeight.width
+      data.vh = computedWidthHeight.height
+      init(data)
+    }
   }
 }
 export default fitview

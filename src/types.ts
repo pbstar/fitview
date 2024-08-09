@@ -9,6 +9,7 @@ export type Config = {
 export type Data = {
   [key: string]: any,
   el: HTMLElement | null,
+  raw_el: any,
   fit: String,
   uw: number,
   uh: number,
