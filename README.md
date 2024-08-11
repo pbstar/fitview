@@ -52,7 +52,7 @@ import fitview from "fitview";
 
 ```javascript
 const container = document.getElementById("container");
-new pSeamlessScroll({
+new fitview({
   el: container,
 });
 ```
