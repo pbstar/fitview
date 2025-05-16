@@ -1,11 +1,18 @@
 {
   "name": "fitview",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "fitview",
   "main": "./lib/fitview.es.js",
   "browser": "./lib/fitview.umd.js",
   "unpkg": "./lib/fitview.umd.js",
   "type": "module",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./lib/fitview.es.js",
+      "require": "./lib/fitview.umd.js"
+    }
+  },
   "types": "index.d.ts",
   "scripts": {
     "build": "rollup -c",
