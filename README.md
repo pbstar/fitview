@@ -15,7 +15,7 @@ fitview 是一个视口自适应 js 插件，它支持多种适配模式，能�
 - fit: 自适应模式，字符串，可选值为 fill、contain（默认值）、scroll、hidden
 - uw: 设计稿宽度，数值，默认值 1920
 - uh: 设计稿高度，数值，默认值 1080
-- resize: 是否监听 resize 事件，布尔值，默认值 true
+- resize: 是否监听元素尺寸变化，布尔值，默认值 true
 
 ### 适配模式
 

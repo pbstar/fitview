@@ -34,9 +34,10 @@ class fitview {
     if (config.resize || config.resize === false) data.resize = config.resize
     start()
     if (data.resize) {
-      window.addEventListener('resize', () => {
+      const resizeObserver = new ResizeObserver(() => {
         start()
       })
+      resizeObserver.observe(data.el as HTMLElement)
     }
     function start() {
       let computedWidthHeight = getComputedWidthHeight(data.el as HTMLElement)
