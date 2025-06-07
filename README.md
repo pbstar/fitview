@@ -13,8 +13,6 @@ fitview 是一个视口自适应 js 插件，它支持多种适配模式，能�
 
 - el: 需要自适应的 DOM 元素
 - fit: 自适应模式，字符串，可选值为 fill、contain（默认值）、scroll、hidden
-- uw: 设计稿宽度，数值，默认值 1920
-- uh: 设计稿高度，数值，默认值 1080
 - resize: 是否监听元素尺寸变化，布尔值，默认值 true
 
 ### 适配模式
@@ -47,7 +45,9 @@ import fitview from "fitview";
 ### 使用示例
 
 ```html
-<div id="container"></div>
+<div id="container">
+  <div style="width:1920px;height:1080px;"></div>
+</div>
 ```
 
 ```javascript

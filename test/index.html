@@ -150,14 +150,48 @@
       </div>
     </div>
   </div>
+  <script src="./js/echarts.min.js"></script>
   <script src="../lib/fitview.umd.js"></script>
   <script>
+    // 在左侧区域添加图表
+    const leftChart = echarts.init(document.querySelector('.body .left'));
+    leftChart.setOption({
+      series: [{
+        type: 'pie',
+        data: [
+          { value: 1048, name: 'Search Engine' },
+          { value: 735, name: 'Direct' },
+          { value: 580, name: 'Email' },
+          { value: 484, name: 'Union Ads' },
+          { value: 300, name: 'Video Ads' }
+        ]
+      }]
+    });
+
+    // 在右侧顶部区域添加图表
+    const rightTopChart = echarts.init(document.querySelector('.body .right .r-t-left'));
+    rightTopChart.setOption({
+      xAxis: {
+        type: 'category',
+        data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      },
+      yAxis: {
+        type: 'value'
+      },
+      series: [{
+        data: [820, 932, 901, 934, 1290, 1330, 1320],
+        type: 'line',
+        smooth: true
+      }]
+    });
+
     new fitview({
       el: document.getElementById('container'),
       // fit: 'fill',
       // fit: 'contain',
       // fit: 'scroll',
       // fit: 'hidden',
+      // resize: false,
     })
   </script>
 </body>

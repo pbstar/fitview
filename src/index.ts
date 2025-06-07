@@ -1,50 +1,58 @@
-import { Config, Data } from './types'
-import init from './init'
-import { getComputedWidthHeight } from './utils'
+import init from "./init";
+import { getComputedWidthHeight } from "./utils";
 
 class fitview {
-  constructor(config: Config) {
-    let data: Data = {
-      el: null,
-      raw_el: null,
-      fit: 'contain',
-      uw: 1920,
-      uh: 1080,
-      vw: 0,
-      vh: 0,
-      resize: true
-    }
+  #data: any = {
+    el: null,
+    fit: "contain",
+    resize: true,
+    vw: 0, // 视口宽度
+    vh: 0, // 视口高度
+    dw: 1920, // 设计稿宽度
+    dh: 1080, // 设计稿高度
+  };
+  constructor(config: { el: HTMLElement; fit?: string; resize?: boolean }) {
     if (!config) {
-      console.warn('config is required')
-      return
+      console.warn("config is required");
+      return;
     }
-    if (!config.el) {
-      console.warn('el is required')
-      return
+    if (!config.el || !(config.el instanceof HTMLElement)) {
+      console.warn("el is required");
+      return;
     }
-    data.el = config.el
-    data.raw_el = config.el.innerHTML
+    //el必须有且只有一个子元素
+    if (config.el.children.length != 1) {
+      console.warn("el must have only one child element");
+      return;
+    }
+    const fitList = ["fill", "contain", "scroll", "hidden"];
+    this.#data.el = config.el;
+    this.#data.resize = config.resize || true;
     if (config.fit) {
-      let fitList = ['fill', 'contain', 'scroll', 'hidden']
-      if (fitList.indexOf(config.fit) > -1) data.fit = config.fit
-      else console.warn('fit must be one of cover, contain, scroll, hidden')
+      if (fitList.includes(config.fit)) {
+        this.#data.fit = config.fit;
+      } else {
+        console.warn("fit must be one of fill, contain, scroll, hidden");
+        return;
+      }
     }
-    if (config.uw) data.uw = config.uw
-    if (config.uh) data.uh = config.uh
-    if (config.resize || config.resize === false) data.resize = config.resize
-    start()
-    if (data.resize) {
+    const start = () => {
+      const obj = getComputedWidthHeight(this.#data.el as HTMLElement);
+      this.#data.vw = obj.vw;
+      this.#data.vh = obj.vh;
+      this.#data.dw = obj.dw;
+      this.#data.dh = obj.dh;
+      init(this.#data);
+    };
+    
+    if (this.#data.resize) {
       const resizeObserver = new ResizeObserver(() => {
-        start()
-      })
-      resizeObserver.observe(data.el as HTMLElement)
-    }
-    function start() {
-      let computedWidthHeight = getComputedWidthHeight(data.el as HTMLElement)
-      data.vw = computedWidthHeight.width
-      data.vh = computedWidthHeight.height
-      init(data)
+        start();
+      });
+      resizeObserver.observe(this.#data.el as HTMLElement);
+    } else {
+      start();
     }
   }
 }
-export default fitview
+export default fitview;

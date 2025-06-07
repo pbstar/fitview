@@ -1,18 +1,29 @@
 export function getComputedWidthHeight(element: HTMLElement) {
-  // 检查当前元素是否有非auto的宽高  
-  let r=element.getBoundingClientRect()
-  if (r.width > 0 && r.height > 0) {
+  const obj = {
+    vw: 0,
+    vh: 0,
+    dw: 1920,
+    dh: 1080,
+  };
+  const firstChild = element.children[0] as HTMLElement;
+  if (!firstChild) {
+    console.warn("el must have only one child element");
+    return obj;
+  }
+  if (
+    element.offsetWidth > 0 &&
+    element.offsetHeight > 0 &&
+    firstChild.offsetWidth > 0 &&
+    firstChild.offsetHeight > 0
+  ) {
     return {
-      width: Math.floor(r.width),
-      height: Math.floor(r.height)
+      vw: element.offsetWidth,
+      vh: element.offsetHeight,
+      dw: firstChild.offsetWidth,
+      dh: firstChild.offsetHeight,
     };
+  } else {
+    console.warn("el and its child element must have width and height");
+    return obj;
   }
-
-
-  // 检查是否有父元素  
-  const parent = element.parentElement;
-  if (!parent) {
-    return { width: 0, height: 0 }
-  }
-  return getComputedWidthHeight(parent);
-}  
+}
