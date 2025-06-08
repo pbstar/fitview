@@ -6,8 +6,10 @@ export default function init(e: any) {
   // 基础样式
   sBox.style.transformOrigin = "0 0";
   fBox.style.overflow = "hidden";
-  // 滚动条样式
-  fBox.style.scrollbarWidth = "none";
+  // fbox滚动条半透明
+  fBox.style.scrollbarColor =
+    "rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.1)";
+
   if (e.fit == "fill") {
     //忽略宽高比，填充整个容器
     sBox.style.transform = `scale( ${wScale}, ${hScale} )`;
