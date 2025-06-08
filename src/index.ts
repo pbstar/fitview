@@ -10,7 +10,9 @@ class fitview {
     vh: 0, // 视口高度
     dw: 1920, // 设计稿宽度
     dh: 1080, // 设计稿高度
+    resizeObserver: null,
   };
+  api: any;
   constructor(config: { el: HTMLElement; fit?: string; resize?: boolean }) {
     if (!config) {
       console.warn("config is required");
@@ -36,7 +38,7 @@ class fitview {
         return;
       }
     }
-    const start = () => {
+    const refresh = () => {
       const obj = getComputedWidthHeight(this.#data.el as HTMLElement);
       this.#data.vw = obj.vw;
       this.#data.vh = obj.vh;
@@ -44,15 +46,27 @@ class fitview {
       this.#data.dh = obj.dh;
       init(this.#data);
     };
-    
+
+    const destroyResize = () => {
+      if (this.#data.resizeObserver) {
+        this.#data.resizeObserver.disconnect();
+        this.#data.resizeObserver = null;
+      }
+    };
+
     if (this.#data.resize) {
-      const resizeObserver = new ResizeObserver(() => {
-        start();
+      this.#data.resizeObserver = new ResizeObserver(() => {
+        refresh();
       });
-      resizeObserver.observe(this.#data.el as HTMLElement);
+      this.#data.resizeObserver.observe(this.#data.el as HTMLElement);
     } else {
-      start();
+      refresh();
     }
+
+    this.api = {
+      refresh,
+      destroyResize,
+    };
   }
 }
 export default fitview;

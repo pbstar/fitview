@@ -22,6 +22,7 @@ export default function init(e: any) {
     } else {
       //容器宽度比小于容器高度比，宽度填满，高度空白
       sBox.style.transform = `scale( ${wScale}, ${wScale} )`;
+      sBox.style.marginLeft = "0";
     }
   } else if (e.fit == "scroll") {
     //保持宽高比，超出部分滚动
@@ -41,6 +42,7 @@ export default function init(e: any) {
     if (wScale > hScale) {
       //容器宽度比大于容器高度比，宽度填满，高度裁剪
       sBox.style.transform = `scale( ${wScale}, ${wScale} )`;
+      sBox.style.marginLeft = "0";
     } else {
       //容器宽度比小于容器高度比，高度填满，宽度裁剪
       sBox.style.transform = `scale( ${hScale}, ${hScale} )`;
