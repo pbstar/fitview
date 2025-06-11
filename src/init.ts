@@ -33,11 +33,15 @@ export default function init(e: any) {
       sBox.style.transform = `scale( ${wScale}, ${wScale} )`;
       fBox.style.overflowX = "hidden";
       fBox.style.overflowY = "scroll";
+      sBox.style.marginRight = "0";
+      sBox.style.marginBottom = `${Math.round(e.vh - e.dh)}px`;
     } else {
       //容器宽度比小于容器高度比，高度填满，宽度滚动
       sBox.style.transform = `scale( ${hScale}, ${hScale} )`;
       fBox.style.overflowX = "scroll";
       fBox.style.overflowY = "hidden";
+      sBox.style.marginRight = `${Math.round(e.vw - e.dw)}px`;
+      sBox.style.marginBottom = "0";
     }
   } else if (e.fit == "hidden") {
     //保持宽高比，超出部分隐藏
