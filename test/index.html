@@ -5,115 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <style>
-      body {
-        margin: 0;
-        padding: 0;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      #container {
-        width: 100vw;
-        height: 100vh;
-        background-color: rgb(17, 30, 99);
-      }
-
-      .screen {
-        width: 1920px;
-        height: 1080px;
-      }
-
-      .header {
-        width: 100%;
-        height: 100px;
-        background-image: url("./imgs/header.png");
-        background-size: 100% 100%;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-
-      .header .title {
-        font-size: 40px;
-        font-weight: bold;
-        color: rgb(0, 229, 255);
-        line-height: 100px;
-        text-align: center;
-      }
-
-      .header .left,
-      .header .right {
-        width: 500px;
-      }
-
-      .header .right {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        padding-right: 50px;
-        color: rgb(0, 229, 255);
-      }
-
-      .header .right img {
-        width: 30px;
-      }
-
-      .body {
-        display: flex;
-        justify-content: space-between;
-        padding-top: 20px;
-      }
-
-      .body .left {
-        width: 500px;
-        height: 940px;
-        overflow: hidden;
-        background-image: url("./imgs/body-left-bg.png");
-        background-size: 100% 100%;
-      }
-
-      .body .right {
-        width: 1400px;
-        height: 940px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-      }
-
-      .body .right .r-top {
-        width: 100%;
-        height: 620px;
-        display: flex;
-        justify-content: space-between;
-      }
-
-      .body .right .r-top .r-t-left {
-        width: 1000px;
-        height: 100%;
-        background-image: url("./imgs/body-r-t-left.png");
-        background-size: 100% 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .body .right .r-top .r-t-right {
-        width: 380px;
-        height: 100%;
-        background-image: url("./imgs/body-r-t-right.png");
-        background-size: 100% 100%;
-      }
-
-      .body .right .r-bot {
-        width: 100%;
-        height: 300px;
-        background-image: url("./imgs/body-r-bot.png");
-        background-size: 100% 100%;
-      }
-    </style>
+    <link rel="stylesheet" href="./css/style.css" />
   </head>
 
   <body>
@@ -138,211 +30,95 @@
         </div>
       </div>
     </div>
+    <div class="controls">
+      <div class="fit-radio-group">
+        <input type="radio" id="fit-fill" name="fitMode" value="fill" />
+        <label for="fit-fill">填充 fill</label>
+        <input
+          type="radio"
+          id="fit-contain"
+          name="fitMode"
+          value="contain"
+          checked
+        />
+        <label for="fit-contain">包含 contain</label>
+        <input type="radio" id="fit-scroll" name="fitMode" value="scroll" />
+        <label for="fit-scroll">滚动 scroll</label>
+        <input type="radio" id="fit-hidden" name="fitMode" value="hidden" />
+        <label for="fit-hidden">隐藏 hidden</label>
+      </div>
+      <button id="destroyResize">取消监听</button>
+    </div>
+    <div id="resizeHandle"></div>
     <script src="./js/echarts.min.js"></script>
     <script src="../lib/fitview.umd.js"></script>
+    <script src="./js/ec.js"></script>
     <script>
-      const fv = new fitview({
-        el: document.getElementById("container"),
-        // fit: 'fill',
-        // fit: 'contain',
-        // fit: 'scroll',
-        // fit: 'hidden',
-        // resize: false,
+      const container = document.getElementById("container");
+
+      let fv = new fitview({
+        el: container,
       });
 
-      // setTimeout(() => {
-      //   fv.api.destroyResize();
-      // }, 2000);
+      // 添加拖拽功能
+      let startX, startY, startWidth, startHeight;
+      let fitMode = "contain";
+      const resizeHandle = document.getElementById("resizeHandle");
 
-      const chart1 = echarts.init(document.getElementById("chart1"));
-      const chart2 = echarts.init(document.getElementById("chart2"));
-      const chart3 = echarts.init(document.getElementById("chart3"));
-      const chart4 = echarts.init(document.getElementById("chart4"));
-      chart1.setOption({
-        title: {
-          text: "数据统计",
-          left: "center",
-          top: "30px",
-          textStyle: { color: "#ffffff" },
-        },
-        grid: {
-          top: "80px",
-          left: "40px",
-          right: "60px",
-          bottom: "40px",
-          containLabel: true,
-        },
-        tooltip: {},
-        xAxis: {
-          type: "category",
-          data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-          axisLine: { lineStyle: { color: "#ffffff" } },
-          axisLabel: { color: "#ffffff" },
-        },
-        yAxis: {
-          type: "value",
-          axisLine: { lineStyle: { color: "#ffffff" } },
-          axisLabel: { color: "#ffffff" },
-          splitLine: { lineStyle: { color: "rgba(255, 255, 255, 0.2)" } },
-        },
-        series: [
-          {
-            data: [120, 200, 150, 80, 70, 110, 130],
-            type: "bar",
-            itemStyle: { color: "#00e5ff" },
-            label: { show: true, position: "top", color: "#ffffff" },
-          },
-        ],
+      // 添加fit模式切换
+      document.querySelectorAll('input[name="fitMode"]').forEach((radio) => {
+        radio.addEventListener("change", () => {
+          // 销毁旧实例
+          fitMode = radio.value;
+          fv.api.destroyResize();
+          init();
+        });
       });
 
-      // 初始化右上折线图
-      chart2.setOption({
-        grid: {
-          top: "80px",
-          left: "40px",
-          right: "60px",
-          bottom: "40px",
-          containLabel: true,
-        },
-        title: {
-          text: "趋势分析",
-          left: "center",
-          top: "30px",
-          textStyle: { color: "#ffffff" },
-        },
-        xAxis: {
-          type: "category",
-          data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-          axisLine: { lineStyle: { color: "#ffffff" } },
-          axisLabel: { color: "#ffffff" },
-        },
-        yAxis: {
-          type: "value",
-          axisLine: { lineStyle: { color: "#ffffff" } },
-          axisLabel: { color: "#ffffff" },
-          splitLine: { lineStyle: { color: "rgba(255, 255, 255, 0.2)" } },
-        },
-        series: [
-          {
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
-            type: "line",
-            smooth: true,
-            lineStyle: { width: 3, color: "#00e5ff" },
-            itemStyle: { color: "#ffffff" },
-            areaStyle: { color: "rgba(0, 229, 255, 0.3)" },
-          },
-        ],
+      resizeHandle.addEventListener("mousedown", (e) => {
+        startX = e.clientX;
+        startY = e.clientY;
+        startWidth = container.offsetWidth;
+        startHeight = container.offsetHeight;
+        document.addEventListener("mousemove", resize);
+        document.addEventListener("mouseup", stopResize);
+        e.preventDefault();
       });
 
-      // 初始化右下饼图
-      chart3.setOption({
-        grid: {
-          top: "20px",
-          left: "40px",
-          right: "60px",
-          bottom: "300px",
-          containLabel: true,
-        },
-        title: {
-          text: "占比分析",
-          left: "center",
-          top: "30px",
-          textStyle: { color: "#ffffff" },
-        },
-        tooltip: {
-          trigger: "item",
-          textStyle: { color: "#333333" },
-        },
-        legend: {
-          orient: "vertical",
-          right: "center",
-          bottom: "30px",
-          textStyle: { color: "#ffffff" },
-        },
-        series: [
-          {
-            type: "pie",
-            radius: "50%",
-            data: [
-              {
-                value: 1048,
-                name: "Search Engine",
-                itemStyle: { color: "#00e5ff" },
-              },
-              { value: 735, name: "Direct", itemStyle: { color: "#00b4ff" } },
-              { value: 580, name: "Email", itemStyle: { color: "#0082ff" } },
-              {
-                value: 484,
-                name: "Union Ads",
-                itemStyle: { color: "#0055ff" },
-              },
-              {
-                value: 300,
-                name: "Video Ads",
-                itemStyle: { color: "#002bff" },
-              },
-            ],
-            label: { color: "#ffffff" },
-            labelLine: { lineStyle: { color: "rgba(255, 255, 255, 0.3)" } },
-            emphasis: {
-              itemStyle: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: "rgba(0, 0, 0, 0.5)",
-              },
-            },
-          },
-        ],
+      function resize(e) {
+        const width = startWidth + (e.clientX - startX);
+        const height = startHeight + (e.clientY - startY);
+        container.style.width = `${width}px`;
+        container.style.height = `${height}px`;
+        resizeHandle.style.top = `${height - 15}px`;
+        resizeHandle.style.left = `${width - 5}px`;
+      }
+
+      function stopResize() {
+        document.removeEventListener("mousemove", resize);
+        document.removeEventListener("mouseup", stopResize);
+      }
+
+      // 添加取消监听功能
+      document.getElementById("destroyResize").addEventListener("click", () => {
+        if (document.getElementById("destroyResize").innerText === "重新监听") {
+          init();
+          document.getElementById("destroyResize").innerText = "取消监听";
+        } else {
+          fv.api.destroyResize();
+          document.getElementById("destroyResize").innerText = "重新监听";
+        }
       });
 
-      // 初始化底部表格区域
-      chart4.setOption({
-        title: {
-          text: "详细数据",
-          left: "center",
-          top: "30px",
-          textStyle: { color: "#ffffff" },
-        },
-        tooltip: {
-          trigger: "axis",
-          axisPointer: { type: "shadow" },
-          textStyle: { color: "#333333" },
-        },
-        grid: {
-          top: "80px",
-          left: "40px",
-          right: "60px",
-          bottom: "40px",
-          containLabel: true,
-        },
-        xAxis: {
-          type: "value",
-          boundaryGap: [0, 0.01],
-          axisLine: { lineStyle: { color: "#ffffff" } },
-          axisLabel: { color: "#ffffff" },
-          splitLine: { lineStyle: { color: "rgba(255, 255, 255, 0.2)" } },
-        },
-        yAxis: {
-          type: "category",
-          data: ["Brazil", "Indonesia", "USA", "India", "China"],
-          axisLine: { lineStyle: { color: "#ffffff" } },
-          axisLabel: { color: "#ffffff" },
-          splitLine: { lineStyle: { color: "rgba(255, 255, 255, 0.2)" } },
-        },
-        series: [
-          {
-            type: "bar",
-            data: [18203, 23489, 29034, 104970, 131744],
-            itemStyle: {
-              color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [
-                { offset: 0, color: "#00e5ff" },
-                { offset: 1, color: "#0082ff" },
-              ]),
-            },
-            label: { show: true, position: "right", color: "#ffffff" },
-          },
-        ],
-      });
+      function init() {
+        container.children[0].style.marginLeft = "auto";
+        container.children[0].style.marginRight = "auto";
+        fv = null;
+        fv = new fitview({
+          el: container,
+          fit: fitMode,
+        });
+      }
     </script>
   </body>
 </html>
