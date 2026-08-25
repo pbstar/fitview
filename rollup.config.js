@@ -15,7 +15,7 @@ const dateTime = () => {
 }
 const banner = `/*!
 * ${pa.name} v${pa.version}
-* Copyright 2024 Pbstar (https://github.com/pbstar)
+* Copyright ${new Date().getFullYear()} Pbstar (https://github.com/pbstar)
 * Licensed under MIT (https://github.com/pbstar/${pa.name}/blob/main/LICENSE)
 * ${dateTime()}
 */
@@ -33,7 +33,8 @@ export default {
     {
       file: `lib/${pa.name}.umd.js`,
       format: "umd",
-      name: `${pa.name}`,
+      name: "FitView",
+      exports: "named",
       banner
     }
   ],

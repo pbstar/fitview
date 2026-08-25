@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "declaration": true, // 生成类型声明
+    "emitDeclarationOnly": true, // 仅生成声明文件
+    "noEmit": false, // 覆盖基础配置的 noEmit
+    "rootDir": "src", // 声明文件输出布局的根目录
+    "outDir": "lib" // 声明文件输出到 lib 目录
+  }
+}

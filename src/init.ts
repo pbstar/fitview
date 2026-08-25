@@ -1,60 +1,89 @@
-export default function init(e: any) {
-  const wScale = Math.round((e.vw / e.dw) * 1000) / 1000; //容器宽度比
-  const hScale = Math.round((e.vh / e.dh) * 1000) / 1000; //容器高度比
-  const fBox = e.el as HTMLElement;
-  const sBox = e.el.children[0] as HTMLElement;
-  // 基础样式
-  sBox.style.transformOrigin = "0 0";
-  fBox.style.overflow = "hidden";
-  // fbox滚动条半透明
-  fBox.style.scrollbarColor =
-    "rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.1)";
+import type { FitMode, FitViewSize } from "./types";
+import { round } from "./utils";
 
-  if (e.fit == "fill") {
-    //忽略宽高比，填充整个容器
-    sBox.style.transform = `scale( ${wScale}, ${hScale} )`;
-  } else if (e.fit == "contain") {
-    //保持宽高比，超出部分空白
-    if (wScale > hScale) {
-      //容器宽度比大于容器高度比，高度填满，宽度空白
-      sBox.style.transform = `scale( ${hScale}, ${hScale} )`;
-      //x轴偏移量取整
-      const xoffset = Math.round((e.vw - e.dw * hScale) / 2);
-      sBox.style.marginLeft = `${xoffset}px`;
-    } else {
-      //容器宽度比小于容器高度比，宽度填满，高度空白
-      sBox.style.transform = `scale( ${wScale}, ${wScale} )`;
-      sBox.style.marginLeft = "0";
-    }
-  } else if (e.fit == "scroll") {
-    //保持宽高比，超出部分滚动
-    if (wScale > hScale) {
-      //容器宽度比大于容器高度比，宽度填满，高度滚动
-      sBox.style.transform = `scale( ${wScale}, ${wScale} )`;
-      fBox.style.overflowX = "hidden";
-      fBox.style.overflowY = "scroll";
-      sBox.style.marginRight = "0";
-      sBox.style.marginBottom = `${Math.round(e.vh - e.dh)}px`;
-    } else {
-      //容器宽度比小于容器高度比，高度填满，宽度滚动
-      sBox.style.transform = `scale( ${hScale}, ${hScale} )`;
-      fBox.style.overflowX = "scroll";
-      fBox.style.overflowY = "hidden";
-      sBox.style.marginRight = `${Math.round(e.vw - e.dw)}px`;
-      sBox.style.marginBottom = "0";
-    }
-  } else if (e.fit == "hidden") {
-    //保持宽高比，超出部分隐藏
-    if (wScale > hScale) {
-      //容器宽度比大于容器高度比，宽度填满，高度裁剪
-      sBox.style.transform = `scale( ${wScale}, ${wScale} )`;
-      sBox.style.marginLeft = "0";
-    } else {
-      //容器宽度比小于容器高度比，高度填满，宽度裁剪
-      sBox.style.transform = `scale( ${hScale}, ${hScale} )`;
-      //x轴偏移量取整
-      const xoffset = Math.round((e.dw * hScale - e.vw) / 2);
-      sBox.style.marginLeft = `-${xoffset}px`;
-    }
+/** 应用结果：实际生效的双轴缩放比 */
+export interface AppliedScale {
+  scaleX: number;
+  scaleY: number;
+}
+
+/** 清除上一个适配模式残留的内联样式 */
+function resetStyles(box: HTMLElement, child: HTMLElement): void {
+  child.style.transform = "";
+  child.style.marginLeft = "";
+  child.style.marginRight = "";
+  child.style.marginBottom = "";
+  box.style.overflowX = "";
+  box.style.overflowY = "";
+}
+
+/** 应用基础样式（每次适配均需重置，避免滚动条样式残留） */
+function applyBaseStyles(box: HTMLElement, child: HTMLElement): void {
+  child.style.transformOrigin = "0 0";
+  box.style.overflow = "hidden";
+  box.style.scrollbarColor = "rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.1)";
+}
+
+/**
+ * 核心适配逻辑：先重置旧样式，再按模式应用缩放。
+ *
+ * @returns 实际生效的 X/Y 轴缩放比
+ */
+export function applyFit(
+  box: HTMLElement,
+  child: HTMLElement,
+  size: FitViewSize,
+  mode: FitMode
+): AppliedScale {
+  resetStyles(box, child);
+  applyBaseStyles(box, child);
+
+  const wScale = round(size.vw / size.dw);
+  const hScale = round(size.vh / size.dh);
+
+  switch (mode) {
+    case "fill":
+      // 忽略宽高比，分别拉伸填满容器
+      child.style.transform = `scale(${wScale}, ${hScale})`;
+      return { scaleX: wScale, scaleY: hScale };
+
+    case "contain":
+      if (wScale > hScale) {
+        // 高度填满，宽度居中留白
+        child.style.transform = `scale(${hScale})`;
+        child.style.marginLeft = `${Math.round((size.vw - size.dw * hScale) / 2)}px`;
+        return { scaleX: hScale, scaleY: hScale };
+      }
+      // 宽度填满，高度方向留白（顶部对齐）
+      child.style.transform = `scale(${wScale})`;
+      return { scaleX: wScale, scaleY: wScale };
+
+    case "scroll":
+      if (wScale > hScale) {
+        // 宽度填满，高度滚动
+        child.style.transform = `scale(${wScale})`;
+        box.style.overflowX = "hidden";
+        box.style.overflowY = "scroll";
+        // 撑出缩放后超出的高度，保证滚动条长度正确
+        child.style.marginBottom = `${Math.round(size.dh * (wScale - 1))}px`;
+        return { scaleX: wScale, scaleY: wScale };
+      }
+      // 高度填满，宽度滚动
+      child.style.transform = `scale(${hScale})`;
+      box.style.overflowX = "scroll";
+      box.style.overflowY = "hidden";
+      child.style.marginRight = `${Math.round(size.dw * (hScale - 1))}px`;
+      return { scaleX: hScale, scaleY: hScale };
+
+    case "hidden":
+      if (wScale > hScale) {
+        // 宽度填满，高度裁剪
+        child.style.transform = `scale(${wScale})`;
+        return { scaleX: wScale, scaleY: wScale };
+      }
+      // 高度填满，宽度居中裁剪
+      child.style.transform = `scale(${hScale})`;
+      child.style.marginLeft = `-${Math.round((size.dw * hScale - size.vw) / 2)}px`;
+      return { scaleX: hScale, scaleY: hScale };
   }
 }
