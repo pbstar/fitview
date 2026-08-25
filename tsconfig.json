@@ -1,13 +1,13 @@
 {
   "compilerOptions": {
-    "target": "es6", // 编译目标  
-    "module": "esnext", // 模块系统  
+    "target": "es2017", // 编译目标
+    "module": "esnext", // 模块系统
+    "moduleResolution": "bundler", // 模块解析器（rollup 打包）
     "noEmit": true, // 不生成编译后的文件
-    "allowImportingTsExtensions": true, // 允许导入.ts 文件
-    "moduleResolution": "node", // 模块解析器
     "strict": true, // 严格模式
+    "skipLibCheck": true, // 跳过第三方类型声明检查
     "resolveJsonModule": true, // 允许导入 `.json` 文件
-  }, 
-  "include": ["src/**/*"], // 包含哪些文件  
-  "exclude": ["node_modules"] // 排除哪些文件  
+  },
+  "include": ["src/**/*"], // 包含哪些文件
+  "exclude": ["node_modules"] // 排除哪些文件
 }

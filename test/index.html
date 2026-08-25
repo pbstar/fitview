@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>FitView 1.0 示例</title>
     <link rel="stylesheet" href="./css/style.css" />
   </head>
 
@@ -47,7 +47,8 @@
         <input type="radio" id="fit-hidden" name="fitMode" value="hidden" />
         <label for="fit-hidden">隐藏 hidden</label>
       </div>
-      <button id="destroyResize">取消监听</button>
+      <button id="destroyBtn">销毁实例</button>
+      <div id="info"></div>
     </div>
     <div id="resizeHandle"></div>
     <script src="./js/echarts.min.js"></script>
@@ -55,25 +56,32 @@
     <script src="./js/ec.js"></script>
     <script>
       const container = document.getElementById("container");
+      const info = document.getElementById("info");
 
-      let fv = new fitview({
+      // 创建控制器：mode 适配模式、watch 默认 true 监听尺寸变化、onResize 尺寸变化回调
+      let fv = FitView.createFitView({
         el: container,
+        mode: "contain",
+        // 显式设计稿尺寸示例（注释掉默认取子元素尺寸）：
+        // designWidth: 1920,
+        // designHeight: 1080,
+        onResize: (res) => {
+          info.innerText =
+            `容器 ${res.width}×${res.height} 缩放 ` +
+            `${res.scaleX.toFixed(3)}×${res.scaleY.toFixed(3)} 模式 ${res.mode}`;
+        },
       });
 
-      // 添加拖拽功能
-      let startX, startY, startWidth, startHeight;
-      let fitMode = "contain";
-      const resizeHandle = document.getElementById("resizeHandle");
-
-      // 添加fit模式切换
+      // 模式切换：直接 setMode，无需销毁重建
       document.querySelectorAll('input[name="fitMode"]').forEach((radio) => {
         radio.addEventListener("change", () => {
-          // 销毁旧实例
-          fitMode = radio.value;
-          fv.api.destroyResize();
-          init();
+          fv.setMode(radio.value);
         });
       });
+
+      // 拖拽调整容器尺寸
+      let startX, startY, startWidth, startHeight;
+      const resizeHandle = document.getElementById("resizeHandle");
 
       resizeHandle.addEventListener("mousedown", (e) => {
         startX = e.clientX;
@@ -99,26 +107,12 @@
         document.removeEventListener("mouseup", stopResize);
       }
 
-      // 添加取消监听功能
-      document.getElementById("destroyResize").addEventListener("click", () => {
-        if (document.getElementById("destroyResize").innerText === "重新监听") {
-          init();
-          document.getElementById("destroyResize").innerText = "取消监听";
-        } else {
-          fv.api.destroyResize();
-          document.getElementById("destroyResize").innerText = "重新监听";
-        }
+      // 销毁实例，断开尺寸监听
+      document.getElementById("destroyBtn").addEventListener("click", () => {
+        fv.destroy();
+        document.getElementById("destroyBtn").disabled = true;
+        info.innerText = "实例已销毁，尺寸监听已断开";
       });
-
-      function init() {
-        container.children[0].style.marginLeft = "auto";
-        container.children[0].style.marginRight = "auto";
-        fv = null;
-        fv = new fitview({
-          el: container,
-          fit: fitMode,
-        });
-      }
     </script>
   </body>
 </html>

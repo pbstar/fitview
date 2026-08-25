@@ -1,29 +1,29 @@
 {
   "name": "fitview",
-  "version": "0.3.3",
-  "description": "fitview",
+  "version": "1.0.0-beta.1",
+  "description": "视口自适应 JS 插件，支持 fill / contain / scroll / hidden 多种适配模式",
   "main": "./lib/fitview.es.js",
   "browser": "./lib/fitview.umd.js",
   "unpkg": "./lib/fitview.umd.js",
   "type": "module",
   "exports": {
     ".": {
-      "types": "./index.d.ts",
+      "types": "./lib/index.d.ts",
       "import": "./lib/fitview.es.js",
       "require": "./lib/fitview.umd.js"
     }
   },
-  "types": "index.d.ts",
+  "types": "./lib/index.d.ts",
   "scripts": {
-    "build": "rollup -c",
-    "dev": "cross-env NODE_ENV=dev rollup -c -w"
+    "build": "tsc -p tsconfig.build.json && rollup -c",
+    "dev": "cross-env NODE_ENV=dev rollup -c -w",
+    "release": "release-it"
   },
   "bugs": {
     "url": "https://github.com/pbstar/fitview/issues"
   },
   "files": [
     "lib",
-    "index.d.ts",
     "README.md"
   ],
   "contributors": [
@@ -38,17 +38,25 @@
   },
   "homepage": "https://github.com/pbstar/fitview",
   "keywords": [
-    "fitview"
+    "fitview",
+    "viewport",
+    "adaptive",
+    "scale",
+    "responsive",
+    "large-screen",
+    "datav"
   ],
   "author": "pengbo <pbstar@sina.cn>",
   "license": "MIT",
   "devDependencies": {
+    "@release-it/conventional-changelog": "^11.0.1",
     "@rollup/plugin-terser": "^0.4.4",
-    "@rollup/plugin-typescript": "^11.1.6",
-    "@types/node": "^20.14.10",
+    "@rollup/plugin-typescript": "^12.3.0",
     "cross-env": "^7.0.3",
+    "release-it": "^20.2.1",
     "rollup": "^4.17.2",
     "rollup-plugin-serve": "^1.1.1",
-    "tslib": "^2.6.3"
+    "tslib": "^2.6.3",
+    "typescript": "^5.9.3"
   }
 }
