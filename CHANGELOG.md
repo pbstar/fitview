@@ -26,7 +26,6 @@
 
 ### 工程化
 
-- 引入 `release-it` + `@release-it/conventional-changelog` 自动化发版
 - TypeScript 声明文件改为构建时从源码自动生成
 - `lib` 构建产物改为 git 忽略，发布时通过 build 生成
 
