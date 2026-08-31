@@ -2,7 +2,7 @@
 
 本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
-## [1.0.0-beta.1](https://github.com/pbstar/fitview/compare/v0.3.3...v1.0.0-beta.1) - 2026-08-25
+## [1.0.0](https://github.com/pbstar/fitview/compare/v0.3.3...v1.0.0) - 2026-08-31
 
 ### ⚠ 破坏性变更
 
