@@ -7,6 +7,14 @@ import type {
 import { FIT_MODES, getSize } from "./utils";
 import { applyFit } from "./init";
 
+// README 承诺从入口导出类型，供消费方 `import type { ... } from "fitview"` 使用
+export type {
+  FitMode,
+  FitViewInfo,
+  FitViewController,
+  FitViewOptions,
+} from "./types";
+
 /**
  * 创建视口自适应控制器。
  *

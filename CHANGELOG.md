@@ -2,6 +2,12 @@
 
 本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.0.1](https://github.com/pbstar/fitview/compare/v1.0.0...v1.0.1) - 2026-09-01
+
+### 修复
+
+- 修复入口未导出类型的问题：`index.d.ts` 此前缺少类型 re-export，`import type { FitMode, FitViewOptions, FitViewInfo, FitViewController } from "fitview"` 会报 TS2614，与 README 文档不符
+
 ## [1.0.0](https://github.com/pbstar/fitview/compare/v0.3.3...v1.0.0) - 2026-08-31
 
 ### ⚠ 破坏性变更
